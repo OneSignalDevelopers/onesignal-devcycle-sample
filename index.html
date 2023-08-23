@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OneSignal Website SDK Sample</title>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(function(OneSignal) {
+      OneSignal.init({
+        appId: "af1595b4-f433-46b6-a6be-536cfbe0bb75",
+      });
+    });
+  </script>
 </head>
 <body>
   <h1>OneSignal Website SDK Sample</h1>
