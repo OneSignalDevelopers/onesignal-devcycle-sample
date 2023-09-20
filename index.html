@@ -14,18 +14,7 @@
     ></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || []
-      OneSignalDeferred.push(function (OneSignal) {
-        OneSignal.init({
-          appId: "af1595b4-f433-46b6-a6be-536cfbe0bb75",
-          serviceWorkerParam: {
-            scope: "/onesignal-website-sdk-sample",
-          },
-          serviceWorkerPath:
-            "/onesignal-website-sdk-sample/OneSignalSDKWorker.js",
-          notifyButton: {
-            enable: true,
-          },
-        })
+
       const user = { user_id: "iamwill@kronos" }
       const dvcOptions = { logLevel: "debug" }
       const devcycleClient = DevCycle.initializeDevCycle(
@@ -44,6 +33,19 @@
           devcycleClient.variableValue("onesignal-integration", false)
 
         if (isOnesignalIntegrationFeatureEnabled) {
+          OneSignalDeferred.push(function (OneSignal) {
+            OneSignal.init({
+              appId: "af1595b4-f433-46b6-a6be-536cfbe0bb75",
+              serviceWorkerParam: {
+                scope: "/onesignal-website-sdk-sample",
+              },
+              serviceWorkerPath:
+                "/onesignal-website-sdk-sample/OneSignalSDKWorker.js",
+              notifyButton: {
+                enable: true,
+              },
+            })
+          })
         } else {
           console.info("OneSignal integration is not enabled.")
         }
