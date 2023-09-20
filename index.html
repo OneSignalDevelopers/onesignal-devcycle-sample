@@ -26,6 +26,27 @@
             enable: true,
           },
         })
+      const user = { user_id: "iamwill@kronos" }
+      const dvcOptions = { logLevel: "debug" }
+      const devcycleClient = DevCycle.initializeDevCycle(
+        "dvc_client_bebf864b_f563_41d0_a124_13a6a4845455_52a3e63",
+        user,
+        dvcOptions
+      )
+
+      devcycleClient.onClientInitialized((err) => {
+        if (err) {
+          console.error(`Devcycle failed to load`, JSON.stringify(err, null, 2))
+          return
+        }
+
+        const isOnesignalIntegrationFeatureEnabled =
+          devcycleClient.variableValue("onesignal-integration", false)
+
+        if (isOnesignalIntegrationFeatureEnabled) {
+        } else {
+          console.info("OneSignal integration is not enabled.")
+        }
       })
     </script>
   </head>
