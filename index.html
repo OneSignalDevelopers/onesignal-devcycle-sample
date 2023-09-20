@@ -34,6 +34,7 @@
 
         if (isOnesignalIntegrationFeatureEnabled) {
           OneSignalDeferred.push(function (OneSignal) {
+            console.info("Initializing OneSignal...")
             OneSignal.init({
               appId: "af1595b4-f433-46b6-a6be-536cfbe0bb75",
               serviceWorkerParam: {
