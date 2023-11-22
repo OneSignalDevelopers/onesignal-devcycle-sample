@@ -15,45 +15,57 @@
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || []
 
-      const user = { user_id: "iamwill@kronos" }
-      const dvcOptions = { logLevel: "debug" }
+      const user = {
+        user_id: 'iamwill@kronos',
+        customData: { iphone: true },
+      }
+
+      const dvcOptions = { logLevel: 'debug' }
       const devcycleClient = DevCycle.initializeDevCycle(
-        "dvc_client_bebf864b_f563_41d0_a124_13a6a4845455_52a3e63",
+        'dvc_client_bebf864b_f563_41d0_a124_13a6a4845455_52a3e63',
         user,
         dvcOptions
       )
 
-      devcycleClient.onClientInitialized((err) => {
+      devcycleClient.onClientInitialized(err => {
         if (err) {
           console.error(`Devcycle failed to load`, JSON.stringify(err, null, 2))
           return
         }
 
         const isOnesignalIntegrationFeatureEnabled =
-          devcycleClient.variableValue("onesignal-integration", false)
-
-        if (isOnesignalIntegrationFeatureEnabled) {
+          devcycleClient.variableValue('onesignal-integration', false)
+        if (!isOnesignalIntegrationFeatureEnabled) {
           OneSignalDeferred.push(function (OneSignal) {
-            console.info("Initializing OneSignal...")
+            console.info('Initializing OneSignal...')
             OneSignal.init({
-              appId: "af1595b4-f433-46b6-a6be-536cfbe0bb75",
+              appId: 'af1595b4-f433-46b6-a6be-536cfbe0bb75',
               serviceWorkerParam: {
-                scope: "/onesignal-website-sdk-sample",
+                scope: '/onesignal-website-sdk-sample',
               },
               serviceWorkerPath:
-                "/onesignal-website-sdk-sample/OneSignalSDKWorker.js",
+                '/onesignal-website-sdk-sample/OneSignalSDKWorker.js',
               notifyButton: {
                 enable: true,
               },
             })
           })
         } else {
-          console.info("OneSignal integration is not enabled.")
+          console.info('OneSignal integration is not enabled.')
+        }
+
+        const doesAppleRock = devcycleClient.variableValue(
+          'apple_rocks',
+          'Feature OFF'
+        )
+        if (doesAppleRock) {
+          document.getElementById('message').innerText = doesAppleRock
         }
       })
     </script>
   </head>
   <body>
     <h1>OneSignal Website SDK Sample</h1>
+    <p id="message"></p>
   </body>
 </html>
