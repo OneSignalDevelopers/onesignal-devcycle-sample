@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OneSignal Website SDK Sample</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script
       src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"
       defer
@@ -13,59 +14,130 @@
       type="text/javascript"
     ></script>
     <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || []
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
 
       const user = {
-        user_id: 'iamwill@kronos',
+        user_id: "iamwill@kronos",
         customData: { iphone: true },
-      }
+      };
 
-      const dvcOptions = { logLevel: 'debug' }
+      const dvcOptions = { logLevel: "debug" };
       const devcycleClient = DevCycle.initializeDevCycle(
-        'dvc_client_bebf864b_f563_41d0_a124_13a6a4845455_52a3e63',
-        user,
-        dvcOptions
-      )
+        "dvc_client_bebf864b_f563_41d0_a124_13a6a4845455_52a3e63",
+        user
+      );
 
-      devcycleClient.onClientInitialized(err => {
+      /* 
+        The error we are facing related to the variable is that the variable is not being updated
+        when the user changes the value in the dashboard.
+
+        Likely related to line 37, 39, 41-44 + 88-89
+      */
+
+      let isOnesignalIntegrationFeatureEnabled;
+
+      const variable = devcycleClient.variable("onesignal-integration", false);
+
+      variable.onUpdate((value) => {
+        console.log("variable updated", value);
+        isOnesignalIntegrationFeatureEnabled = value;
+      });
+
+      devcycleClient.onClientInitialized((err) => {
         if (err) {
-          console.error(`Devcycle failed to load`, JSON.stringify(err, null, 2))
-          return
+          console.error(
+            `Devcycle failed to load`,
+            JSON.stringify(err, null, 2)
+          );
+          return;
         }
 
-        const isOnesignalIntegrationFeatureEnabled =
-          devcycleClient.variableValue('onesignal-integration', false)
-        if (!isOnesignalIntegrationFeatureEnabled) {
+        isOnesignalIntegrationFeatureEnabled = devcycleClient.variableValue(
+          "onesignal-integration",
+          false
+        );
+
+        if (isOnesignalIntegrationFeatureEnabled) {
           OneSignalDeferred.push(function (OneSignal) {
-            console.info('Initializing OneSignal...')
+            console.info("Initializing OneSignal...");
             OneSignal.init({
-              appId: 'af1595b4-f433-46b6-a6be-536cfbe0bb75',
+              appId: "d3d36ccf-59a7-4164-85d2-e633a3ea3543",
               serviceWorkerParam: {
-                scope: '/onesignal-website-sdk-sample',
+                scope: "/onesignal-website-sdk-sample",
               },
               serviceWorkerPath:
-                '/onesignal-website-sdk-sample/OneSignalSDKWorker.js',
+                "/onesignal-website-sdk-sample/OneSignalSDKWorker.js",
               notifyButton: {
                 enable: true,
               },
-            })
-          })
+            });
+          });
         } else {
-          console.info('OneSignal integration is not enabled.')
+          console.info("OneSignal integration is not enabled.");
         }
 
         const doesAppleRock = devcycleClient.variableValue(
-          'apple_rocks',
-          'Feature OFF'
-        )
+          "apple_rocks",
+          "Feature OFF"
+        );
+
         if (doesAppleRock) {
-          document.getElementById('message').innerText = doesAppleRock
+          document.getElementById("message").innerText = doesAppleRock;
         }
-      })
+      });
+      console.log("What is the value?", isOnesignalIntegrationFeatureEnabled);
+      variable.value &&
+        document.addEventListener(
+          "DOMContentLoaded",
+          () => {
+            document
+              .getElementById("infoForm")
+              .addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                let information = document.getElementById("information").value;
+
+                OneSignal.User.addEmail(information);
+                alert("Thank you for your submission!");
+              });
+          },
+          false
+        );
     </script>
   </head>
-  <body>
-    <h1>OneSignal Website SDK Sample</h1>
-    <p id="message"></p>
+
+  <body class="bg-white text-gray-800">
+    <header class="bg-gray-100 p-6 shadow-md">
+      <h1 class="text-3xl font-bold text-gray-900">
+        OneSignal Website SDK Sample
+      </h1>
+    </header>
+
+    <main class="p-6">
+      <p id="message" class="text-xl text-gray-700">Sub-header</p>
+
+      <div class="bg-white p-8 rounded-lg max-w-sm mx-auto custom-shadow">
+        <h1 class="text-xl font-semibold mb-4">
+          Would you like to help us build an app?
+        </h1>
+        <form id="infoForm" class="flex flex-col">
+          <label for="information" class="sr-only"
+            >Show me your information</label
+          >
+          <input
+            type="text"
+            id="information"
+            placeholder="Show me your information!!!!!"
+            class="border-2 border-gray-300 p-3 rounded-md mb-4 focus:outline-none focus:border-blue-500 transition-colors"
+          />
+          <button
+            type="submit"
+            class="bg-orange-400 text-white font-bold py-2 px-4 rounded-md hover:bg-orange-500 transition-colors"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </main>
   </body>
 </html>
